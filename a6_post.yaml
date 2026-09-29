@@ -1,0 +1,210 @@
+schema_version: 1
+name: aqr_dp3_stackcube_a6_post
+shape_meta:
+  obs:
+    point_cloud:
+      shape:
+      - 4096
+      - 6
+      type: point_cloud
+    agent_pos:
+      shape:
+      - 16
+      type: low_dim
+  action:
+    shape:
+    - 8
+dataset:
+  _target_: contactflow.dp3.aqr_dp3.AQRDP3Dataset
+  zarr_path: data/dp3/maniskill_stackcube_aqr_xyzrgb4096_train_0_799.zarr
+  horizon: 12
+  pad_before: 1
+  pad_after: 7
+  seed: 42
+  val_ratio: 0.1
+  max_train_episodes: 800
+  query_points: 4096
+  require_robot_mask: false
+  require_point_valid_mask: true
+  workspace_crop_min:
+  - -0.5
+  - -0.5
+  - -0.05
+  workspace_crop_max:
+  - 0.5
+  - 0.65
+  - 0.5
+  reject_workspace_violations: true
+  workspace_scan_chunk_steps: 32
+policy:
+  _target_: contactflow.dp3.aqr_dp3.AQRDP3
+  shape_meta:
+    obs:
+      point_cloud:
+        shape:
+        - 4096
+        - 6
+        type: point_cloud
+      agent_pos:
+        shape:
+        - 16
+        type: low_dim
+    action:
+      shape:
+      - 8
+  horizon: 12
+  n_obs_steps: 2
+  n_action_steps: 8
+  obs_as_global_cond: true
+  diffusion_step_embed_dim: 128
+  down_dims:
+  - 128
+  - 256
+  - 384
+  kernel_size: 5
+  n_groups: 8
+  condition_type: film
+  use_down_condition: true
+  use_mid_condition: true
+  use_up_condition: true
+  encoder_output_dim: 128
+  crop_shape: null
+  use_pc_color: true
+  pointnet_type: pointnet
+  pointcloud_encoder_cfg:
+    in_channels: 6
+    out_channels: 128
+    use_layernorm: true
+    final_norm: layernorm
+    normal_channel: false
+  num_inference_steps: 10
+  noise_scheduler:
+    _target_: diffusers.schedulers.scheduling_ddim.DDIMScheduler
+    num_train_timesteps: 100
+    beta_start: 0.0001
+    beta_end: 0.02
+    beta_schedule: squaredcos_cap_v2
+    clip_sample: true
+    set_alpha_to_one: true
+    steps_offset: 0
+    prediction_type: sample
+  aqr_config:
+    experiment: A6_POST
+    use_robot_mask_feature: false
+    query_start_fraction: 0.5
+    local_action_slots:
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    slot1_sweep_enabled: true
+    current_tcp_fallback_enabled: true
+    slot1_sweep_samples: 4
+    front_end:
+      enc_points: 2048
+      enc_global_points: 1280
+      enc_tcp_swept_points: 768
+      query_points: 4096
+      tcp_radius_m: 0.08
+      seed: 42
+      deterministic: true
+      workspace_crop_min:
+      - -0.5
+      - -0.5
+      - -0.05
+      workspace_crop_max:
+      - 0.5
+      - 0.65
+      - 0.5
+    action_contract_path: artifacts/contracts/stackcube/action_contract_h12_a8.json
+    exec_steps: 8
+    future_aux: false
+    future_horizons:
+    - 1
+    - 2
+    task_profile: stack_cube
+    query_radii_m:
+    - 0.01
+    - 0.03
+    - 0.05
+    - 0.1
+    query_neighbors:
+    - 16
+    - 64
+    - 128
+    - 256
+    relation_features: true
+    relation_gate_initial_bias: -1.5
+    relation_attention: false
+    relation_gain_scale: 0.0
+    offset_training_enabled: true
+    offset_max_action_norm: 0.3
+    offset_prob: 0.6
+    relation_fusion_mode: convex
+    relation_gate_maximum: 1.0
+    bounded_action_residual: true
+    action_residual_max_norm: 0.3
+    action_residual_min_progress_ratio: 0.5
+    action_residual_protect_non_arm: true
+    improvement_loss_enabled: false
+    improvement_loss_weight: 0.0
+    improvement_loss_clean_only: false
+    query_source: final_base
+    refinement_stage: post_diffusion
+    post_base_frozen: false
+    post_delta_loss_weight: 1.0
+    post_corrected_loss_weight: 1.0
+    post_confidence_loss_weight: 0.1
+    post_confidence_initial_bias: -2.0
+    anchor_preserving_query: true
+optimizer:
+  _target_: torch.optim.AdamW
+  lr: 0.0001
+  betas:
+  - 0.95
+  - 0.999
+  eps: 1.0e-08
+  weight_decay: 1.0e-06
+dataloader:
+  batch_size: 16
+  num_workers: 8
+  shuffle: true
+  pin_memory: true
+  persistent_workers: true
+validation_dataloader:
+  batch_size: 8
+  num_workers: 4
+  shuffle: false
+  pin_memory: true
+  persistent_workers: false
+training_sampler:
+  mode: uniform
+  events_csv: ''
+  grasp_position_ratio: 0.45
+  stable_lift_ratio: 0.3
+  uniform_ratio: 0.25
+  pre_close_steps: 8
+  post_stable_steps: 2
+  post_secure_lift_steps: 2
+  samples_per_epoch: 0
+  require_all_training_episodes: true
+  seed: 42
+training:
+  output_dir: outputs/aqr_a6_post
+  device: auto
+  seed: 42
+  epochs: 80
+  max_train_steps: 0
+  max_validation_steps: 20
+  validation_every: 1
+  checkpoint_every: 1
+  gradient_clip: 1.0
+  progress: true
+  progress_update_steps: 20
+evaluation:
+  checkpoint: outputs/aqr_a6_post/checkpoints/best.pt
+  max_batches: 0
