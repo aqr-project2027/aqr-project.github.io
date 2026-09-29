@@ -214,10 +214,3 @@ class KeypointMaskGenerator(ModuleAttrMixin):
             mask = mask | context_mask
 
         return mask
-
-
-def test():
-    # kmg = KeypointMaskGenerator(2,2, random_obs_steps=True)
-    # self = KeypointMaskGenerator(2,2,context_dim=2, action_visible=True)
-    # self = KeypointMaskGenerator(2,2,context_dim=0, action_visible=True)
-    self = LowdimMaskGenerator(2,20, max_n_obs_steps=3, action_visible=True)

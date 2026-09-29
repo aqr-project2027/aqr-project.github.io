@@ -38,9 +38,3 @@ class Conv1dBlock(nn.Module):
 
     def forward(self, x):
         return self.block(x)
-
-
-def test():
-    cb = Conv1dBlock(256, 128, kernel_size=3)
-    x = torch.zeros((1,256,16))
-    o = cb(x)
