@@ -29,6 +29,16 @@
       margin-top: 20px;
       color: #777;
     }
+    nav { margin: 32px 0 48px; }
+    nav a { display: inline-block; margin: 6px; padding: 10px 18px;
+      color: #222; border: 1px solid #ddd; border-radius: 8px; text-decoration: none; }
+    section { margin: 44px 0; text-align: left; }
+    p { line-height: 1.7; color: #555; }
+    .videos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    video { width: 100%; border-radius: 10px; background: #111; }
+    figure { margin: 0; }
+    figcaption { margin-top: 10px; color: #555; text-align: center; }
+    @media (max-width: 700px) { .videos { grid-template-columns: 1fr; } body { margin-top: 40px; } }
   </style>
 </head>
 
@@ -43,6 +53,32 @@
   <div class="venue">
     Anonymous Submission
   </div>
+
+  <nav aria-label="Project resources">
+    <a href="https://github.com/aqr-project2027/aqr-project.github.io#readme">Source overview</a>
+    <a href="https://github.com/aqr-project2027/aqr-project.github.io/blob/main/docs/METHOD.md">Method</a>
+    <a href="#demonstrations">Trajectory videos</a>
+  </nav>
+
+  <section>
+    <h2>Generate, query, refine</h2>
+    <p>AQR first generates an action sequence with a diffusion policy, then queries
+      local geometry along the candidate tool trajectory. A confidence-weighted,
+      bounded residual refines the completed action sequence once.</p>
+    <p>This source showcase presents the model and its training objective.
+      Experiment configurations, calibration data, datasets and checkpoints are not included.</p>
+  </section>
+
+  <section id="demonstrations">
+    <h2>Trajectory examples</h2>
+    <div class="videos">
+      <figure><video controls playsinline preload="metadata" poster="media/demo_01.png"><source src="media/demo_01.mp4" type="video/mp4"><a href="media/demo_01.mp4">Download example 1</a></video><figcaption>Example 1</figcaption></figure>
+      <figure><video controls playsinline preload="metadata" poster="media/demo_02.png"><source src="media/demo_02.mp4" type="video/mp4"><a href="media/demo_02.mp4">Download example 2</a></video><figcaption>Example 2</figcaption></figure>
+      <figure><video controls playsinline preload="metadata" poster="media/demo_03.png"><source src="media/demo_03.mp4" type="video/mp4"><a href="media/demo_03.mp4">Download example 3</a></video><figcaption>Example 3</figcaption></figure>
+    </div>
+    <p>Selected successful trajectories assembled from historical simulation render
+      snapshots, played at 5 fps. No intermediate actions or frames were generated.</p>
+  </section>
 
 </body>
 </html>

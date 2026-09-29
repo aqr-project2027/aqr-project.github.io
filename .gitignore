@@ -1,0 +1,26 @@
+# Private experiment material
+configs/
+artifacts/
+data/
+outputs/
+logs/
+checkpoints/
+scripts/
+*.yaml
+*.yml
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.h5
+*.hdf5
+*.zarr/
+*.log
+.env
+.env.*
+__pycache__/
+*.py[cod]
+.pytest_cache/
+pytest-cache-files-*/
+*.zip
+*.tar.gz
